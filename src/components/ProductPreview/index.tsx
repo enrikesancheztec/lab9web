@@ -1,6 +1,7 @@
 import "./index.css";
 import Product from "../../types/Product";
 import { Grid, Paper, Typography } from "@material-ui/core";
+import { Link } from "react-router-dom";
 
 interface ProductPreviewProps {
     product: Product;
@@ -45,18 +46,18 @@ const ProductPreview: React.FC<ProductPreviewProps> = (props) => {
             <Grid container className="productGrid" spacing={2}>
                 <Grid item lg={2}>
                     <Paper className="largeImage">
-                        <img src={mediumImageUrl} alt={props.product.name} />
+                      <Link className="product-link" to={`/pdp?productId=${props.product.id}`}><img src={mediumImageUrl} alt={props.product.name} /></Link>
                     </Paper>
                 </Grid>
                 <Grid item lg={10} container>
                     <Grid item lg={12}>
                         <Typography className="productName" variant="h1">
-                            {props.product.name}
+                            <Link className="product-link" to={`/pdp?productId=${props.product.id}`}>{props.product.name}</Link>
                         </Typography>
                     </Grid>
                     <Grid item lg={12}>
                         <Typography className="description">
-                            {props.product.description}
+                          <Link className="product-link" to={`/pdp?productId=${props.product.id}`}>{props.product.description}</Link>
                         </Typography>
                     </Grid>
                     <Grid item lg={2}>

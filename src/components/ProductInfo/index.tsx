@@ -8,17 +8,25 @@ import {
   Select,
   MenuItem,
   Button,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
 } from "@material-ui/core";
+import React from "react";
 
 interface ProductInfoProps {
   product: Product;
+  colors: string[];
+  selectedColor: string;
+  changedColor(event: any): void
 }
 
 /**
  * Product info elements
  * @returns ProductInfo UI elements
  */
-const ProductInfo: React.FC<ProductInfoProps> = (props) => {
+const ProductInfo : React.FC<ProductInfoProps>  = (props) => {
   var listPrice = 0.00;
   if (props.product !== undefined && props.product.childSkus !== undefined && props.product.childSkus[0] !== undefined) {
     listPrice = props.product.childSkus[0].listPrice;
@@ -29,32 +37,46 @@ const ProductInfo: React.FC<ProductInfoProps> = (props) => {
     salePrice = props.product.childSkus[0].salePrice;
   }
 
-  var colors: any[] = [];
-  var sizes: any[] = [];
+  var colors : any[] = [];
+  var sizes : any[] = [];
+  var comments: any[] = [];
 
-  var selectedColor = "";
+  props.colors.forEach( (color) => {
+    colors.push(<option value={color}>{color}</option>);
+  }); 
+
   var selectedSize = "";
   if (props.product !== undefined && props.product.childSkus !== undefined) {
-    selectedColor = props.product.childSkus[0].color;
-    props.product.childSkus.forEach((sku) => {
-      colors.push(<MenuItem value={sku.color}>{sku.color}</MenuItem>);
-    });
-
     selectedSize = props.product.childSkus[0].size;
-    props.product.childSkus.forEach((sku) => {
+    props.product.childSkus.forEach( (sku) => {
       sizes.push(<MenuItem value={sku.size}>{sku.size}</MenuItem>);
-    });
+    }); 
+
+    props.product.comments.forEach( (comment) => {
+      comments.push(
+        <React.Fragment>
+            <ListItem alignItems="flex-start">
+              <ListItemText
+                primary={comment.author}
+                secondary={
+                  <React.Fragment>
+                    <Typography>
+                      {comment.body}
+                    </Typography>
+                    {comment.created}
+                  </React.Fragment>
+                }
+              />
+            </ListItem>
+            <Divider variant="inset" component="li" />
+          </React.Fragment>
+      );
+    });  
   }
 
   var largeImageUrl = "";
-  if (
-    props.product !== undefined &&
-    props.product.childSkus !== undefined &&
-    props.product.childSkus[0] !== undefined
-  ) {
+  if (props.product !== undefined && props.product.childSkus !== undefined && props.product.childSkus[0] !== undefined) {
     largeImageUrl = props.product.childSkus[0].largeImageUrl;
-  } else {
-    largeImageUrl = "https://dummyimage.com/500x500/000/0011ff"
   }
 
   return (
@@ -91,7 +113,7 @@ const ProductInfo: React.FC<ProductInfoProps> = (props) => {
             <InputLabel className="productLabel" id="color-label">
               Color
             </InputLabel>
-            <Select labelId="color-label" id="color-select" label="Color" value={selectedColor}>
+            <Select labelId="color-label" id="color-select" native={true} label="Color" value={props.selectedColor} onChange={props.changedColor}>
               {colors}
             </Select>
           </Grid>
@@ -125,6 +147,17 @@ const ProductInfo: React.FC<ProductInfoProps> = (props) => {
           </Grid>
 
           <Grid item lg={12} />
+        </Grid>
+      </Grid>
+      <Grid container className="commentGrid" spacing={2}>
+        <Grid item lg={4}>
+          <Typography variant="h2" className="comment-title">Comments</Typography>
+        </Grid>
+        <Grid item lg={8} />
+        <Grid item lg={12}>
+          <List>
+            {comments}
+          </List>
         </Grid>
       </Grid>
     </div>
