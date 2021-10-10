@@ -12,7 +12,7 @@ interface ProductState {
     selectedColor: string;
     sizes: string[];
     selectedSize: string;
-    quantity: number;
+    selectedQuantity: number;
     sku: Sku;
 }
 
@@ -28,7 +28,7 @@ class ProductDetail extends React.Component<{}, ProductState> {
         selectedColor: '',
         sizes: [] as string[],
         selectedSize: '',
-        quantity: 1,
+        selectedQuantity: 1,
         sku: {} as Sku
     }
 
@@ -38,7 +38,8 @@ class ProductDetail extends React.Component<{}, ProductState> {
      */
     render() {
         return (
-            <ProductInfo product={this.state.product} colors={this.state.colors} selectedColor={this.state.selectedColor} changedColor={this.changedColor} />
+            <ProductInfo product={this.state.product} colors={this.state.colors} selectedColor={this.state.selectedColor} changedColor={this.changedColor}
+                sizes={this.state.sizes} selectedSize={this.state.selectedSize} changedSize={this.changedSize} addToCart={this.addToCart} selectedQuantity={this.state.selectedQuantity} changedQuantity={this.changedQuantity} />
         )
     }
 
@@ -55,8 +56,18 @@ class ProductDetail extends React.Component<{}, ProductState> {
                 const colors = helper.getColors();
                 let sizes = [] as string[];
 
-                if (colors.length  >= 1) {
+                if (colors.length >= 1) {
+                    const defaultSelectedColor = colors[0];
                     sizes = helper.getSizes(colors[0]);
+
+                    this.setState({ selectedColor: defaultSelectedColor });
+
+                    if (sizes.length >= 1) {
+                        const defaultSelectedSize = sizes[0];
+                        this.setState({ selectedSize: defaultSelectedSize });
+                        const sku = helper.getSku(defaultSelectedColor, defaultSelectedSize);
+                        this.setState({ sku });
+                    }
                 }
 
                 console.log("Sizes: " + sizes);
@@ -73,10 +84,47 @@ class ProductDetail extends React.Component<{}, ProductState> {
 
         console.log("selectedColor: " + value);
 
+        const helper = this.state.helper;
+        const sizes = helper.getSizes(value);
+
         this.setState({
-            selectedColor: value
+            selectedColor: value,
+            sizes
         })
-    } 
+
+        if (sizes.length >= 1) {
+            const defaultSelectedSize = sizes[0];
+            const sku = this.state.helper.getSku(value, defaultSelectedSize);
+            this.setState({ selectedSize: defaultSelectedSize, sku });
+            this.setState({ selectedSize: defaultSelectedSize });
+        }
+    }
+
+    changedSize = (event: any) => {
+        let target = event.currentTarget as HTMLSelectElement;
+        let value = target.value;
+
+        console.log("selectedSize: " + value);
+        const sku = this.state.helper.getSku(this.state.selectedColor, value);
+        console.log("Selected sku: " + sku.id);
+        this.setState({
+            selectedSize: value,
+            sku
+        })
+    }
+
+    changedQuantity = (event: any) => {
+        let target = event.currentTarget as HTMLSelectElement;
+        let value = target.value;
+
+        this.setState({
+            selectedQuantity: parseInt(value)
+        })
+    }
+
+    addToCart = (event: any) => {
+        console.log("Add to Cart sku id: " + this.state.sku.id);
+    }
 }
 
 export default ProductDetail;

@@ -1,4 +1,5 @@
 import Product from "../types/Product";
+import Sku from "../types/Sku";
 
 class ProductHelper {
   product: Product;
@@ -12,7 +13,9 @@ class ProductHelper {
 
     if (this.product.childSkus !== undefined) {
         this.product.childSkus.forEach( (sku) => {
-            colors.push(sku.color);
+            if(!colors.includes(sku.color)) {
+              colors.push(sku.color);
+            }
         });
     }
 
@@ -31,6 +34,18 @@ class ProductHelper {
     }
 
     return sizes;   
+  }
+
+  getSku(color: string, size: string) : Sku {
+    var foundSku = {} as Sku;
+    if (this.product.childSkus !== undefined) {
+      this.product.childSkus.forEach( (sku) => {
+          if (sku.color === color && sku.size === size) {
+              foundSku = sku;
+          }
+      });
+    }
+    return foundSku;
   }
 }
 

@@ -18,8 +18,14 @@ import React from "react";
 interface ProductInfoProps {
   product: Product;
   colors: string[];
+  sizes: string[];
   selectedColor: string;
-  changedColor(event: any): void
+  changedColor(event: any): void;
+  selectedSize: string;
+  changedSize(event: any): void;
+  selectedQuantity: number;
+  changedQuantity(event: any): void;  
+  addToCart(event: any): void;
 }
 
 /**
@@ -45,13 +51,11 @@ const ProductInfo : React.FC<ProductInfoProps>  = (props) => {
     colors.push(<option value={color}>{color}</option>);
   }); 
 
-  var selectedSize = "";
-  if (props.product !== undefined && props.product.childSkus !== undefined) {
-    selectedSize = props.product.childSkus[0].size;
-    props.product.childSkus.forEach( (sku) => {
-      sizes.push(<MenuItem value={sku.size}>{sku.size}</MenuItem>);
-    }); 
+  props.sizes.forEach( (size) => {
+    sizes.push(<option value={size}>{size}</option>);
+  }); 
 
+  if (props.product !== undefined && props.product.childSkus !== undefined) {
     props.product.comments.forEach( (comment) => {
       comments.push(
         <React.Fragment>
@@ -121,7 +125,7 @@ const ProductInfo : React.FC<ProductInfoProps>  = (props) => {
             <InputLabel className="productLabel" id="size-label">
               Size
             </InputLabel>
-            <Select labelId="size-label" id="size-select" label="Size" value={selectedSize}>
+            <Select labelId="size-label" id="size-select" native={true} label="Size" value={props.selectedSize} onChange={props.changedSize}>
               {sizes}
             </Select>
           </Grid>
@@ -130,18 +134,18 @@ const ProductInfo : React.FC<ProductInfoProps>  = (props) => {
             <InputLabel className="productLabel" id="quantity-label">
               Quantity
             </InputLabel>
-            <Select labelId="quantity-label" id="quantity-select" label="Quantity" value={1}>
-              <MenuItem value="1">1</MenuItem>
-              <MenuItem value="2">2</MenuItem>
-              <MenuItem value="3">3</MenuItem>
-              <MenuItem value="4">4</MenuItem>
-              <MenuItem value="5">5</MenuItem>
+            <Select labelId="quantity-label" id="quantity-select" native={true} label="Quantity" value={props.selectedQuantity} onChange={props.changedQuantity}>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
             </Select>
           </Grid>
           <Grid item lg={10} />
 
           <Grid item lg={4}>
-            <Button className="cartButton" variant="contained">
+            <Button className="cartButton" variant="contained" onClick={props.addToCart}>
               Add to Cart
             </Button>
           </Grid>
