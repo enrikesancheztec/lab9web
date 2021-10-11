@@ -2,6 +2,7 @@ import React from "react";
 import ProductInfo from "../../components/ProductInfo";
 import ProductService from "../../services/ProductService";
 import ProductHelper from "../../tools/ProductHelper";
+import SessionStorageHelper from "../../tools/SessionStorageHelper";
 import Product from "../../types/Product";
 import Sku from "../../types/Sku";
 
@@ -124,6 +125,9 @@ class ProductDetail extends React.Component<{}, ProductState> {
 
     addToCart = (event: any) => {
         console.log("Add to Cart sku id: " + this.state.sku.id);
+        const cart = SessionStorageHelper.getCart();
+        cart.addItem(this.state.product, this.state.sku, this.state.selectedQuantity, this.state.sku.salePrice);
+        SessionStorageHelper.updateCart(cart);
     }
 }
 
