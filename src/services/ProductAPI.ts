@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const baseURL = process.env.REACT_APP_PRODUCT_API_BASE_URL;
+
 const ProductAPI = axios.create({
-    baseURL: 'https://product-api-tec.herokuapp.com/ecom/api/v1/',
+    baseURL: baseURL,
     responseType: 'json'
 });
 
